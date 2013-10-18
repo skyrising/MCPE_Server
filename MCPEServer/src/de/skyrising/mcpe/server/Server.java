@@ -2,12 +2,8 @@ package de.skyrising.mcpe.server;
 
 import java.io.*;
 import java.net.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.text.*;
+import java.util.*;
 import java.util.logging.*;
 
 import de.skyrising.mcpe.server.entity.*;
@@ -27,9 +23,15 @@ public class Server extends Thread
     public long serverId;
     public String serverType;
     public String serverName;
-    public Map<InetAddress, EntityPlayer> clients;
+    public Map<Integer, EntityPlayer> clients;
+    public Map<String, EntityPlayer> players;
+    public long seed = 1382104089;
     public int maxClients = 20;
     public int mtu = 1447;
+    public boolean hasWhitelist = false;
+    public List<String> whitelist;
+    public List<String> banned;
+    public List<InetAddress> bannedIps;
     private PacketHandler handler;
     public PcapLogger pcapLogger;
     public PrintStream packetLogger;
@@ -80,7 +82,11 @@ public class Server extends Thread
 	{
 	    e.printStackTrace();
 	}
-	clients = new HashMap<InetAddress, EntityPlayer>();
+	clients = new HashMap<Integer, EntityPlayer>();
+	players = new HashMap<String, EntityPlayer>();
+	whitelist = new ArrayList<String>();
+	banned = new ArrayList<String>();
+	bannedIps = new ArrayList<InetAddress>();
 	serverSocket = new DatagramSocket(port);
 	handler = new PacketHandler();
 	log("Starting Minecraft PE server on " + serverSocket.getInetAddress()+ ":" + port);

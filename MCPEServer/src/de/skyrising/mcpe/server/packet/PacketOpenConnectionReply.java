@@ -20,7 +20,7 @@ public class PacketOpenConnectionReply extends Packet
     {
 	try
 	{
-            out.writeByte(((Boolean)data[0]) ? 6 : 8);
+            out.writeByte(((Boolean)data[0]) ? 8 : 6);
 	    out.write(Constants.RAKNET_MAGIC);
 	    if((Boolean)data[0])
 	    {

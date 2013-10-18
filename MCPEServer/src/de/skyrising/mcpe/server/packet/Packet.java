@@ -41,13 +41,9 @@ public abstract class Packet
     
     public void send()
     {
-	if(bout == null)
-	{
-	    server.error("Packet type " + this.getClass().getSimpleName() + " cannot be sent");
-	    return;
-	}
+	if(bout != null)
 	this.data = bout.toByteArray();
-	server.debug("Sending " + this.getClass().getSimpleName());
+	server.debug("Sending " + this);
 	server.sendToClient(new DatagramPacket(data, data.length, ip, port));
 	try
 	{
@@ -61,6 +57,12 @@ public abstract class Packet
     public void construct(Object... data)
     {
 	server.error("Packet type " + this.getClass().getSimpleName() + " cannot be constructed");
+    }
+    
+    @Override
+    public String toString()
+    {
+        return this.getClass().getSimpleName() + (data.length > 0 ? String.format(" 0x%02X", data[0]) : "");
     }
     
     public static Packet construct(DatagramPacket packet)
@@ -81,7 +83,7 @@ public abstract class Packet
 	{
 	    Constructor<? extends Packet> constructor = clazz.getConstructor(InetAddress.class, int.class, byte[].class);
 	    Packet p = constructor.newInstance(packet.getAddress(), packet.getPort(), data);
-	    server.debug("Recieving " + clazz.getSimpleName());
+	    server.debug("Recieving " + p);
 	    return p;
 	} catch(Exception e)
 	{
@@ -108,6 +110,7 @@ public abstract class Packet
 	classes[0x06] = PacketOpenConnectionReply.class;
 	classes[0x07] = PacketOpenConnectionRequest.class;
 	classes[0x08] = PacketOpenConnectionReply.class;
+	classes[0xC0] = PacketAck.class;
 	classes[0x1A] = PacketIncompatibleProtocolVersion.class;
 	classes[0x1C] = PacketPong.class;
 	classes[0x1D] = PacketPong.class;

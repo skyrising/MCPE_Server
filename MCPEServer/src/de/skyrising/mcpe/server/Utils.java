@@ -12,6 +12,14 @@ public class Utils
 	out.writeShort(s.length());
 	out.writeBytes(s);
     }
+    
+    public static String readString(DataInputStream in) throws IOException
+    {
+	short length = in.readShort();
+	byte[] bytes = new byte[length];
+	in.read(bytes);
+	return new String(bytes);
+    }
 
     public static String toHex(byte[] bytes)
     {

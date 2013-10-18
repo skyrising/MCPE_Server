@@ -50,7 +50,8 @@ public class PacketOpenConnectionRequest extends Packet
 	    in.readShort();
 	    short mtu = in.readShort();
 	    long clientID = in.readLong();
-	    server.clients.put(ip, new EntityPlayer(clientID, ip, port, mtu));
+	    server.clients.put(ip.hashCode() + port, new EntityPlayer(clientID, ip, port, mtu));
+	    server.debug("Adding client from " + ip + ":" + port);
 	    server.log(String.format("%016X logged in from %s:%d with mtu %d", clientID, ip, port, mtu));
 	    Packet reply = new PacketOpenConnectionReply(ip, port);
 	    reply.construct(true, (short)port, mtu);

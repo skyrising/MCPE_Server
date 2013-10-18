@@ -98,6 +98,7 @@ public class EntityPlayer extends Entity
 		
 		server.players.put(username, this);
 		server.log(username + " logged in from " + ip + ":" + port);
+		sendPacket(MC_LOGIN_STATUS, 0);
 	    }
 	}
     }
@@ -121,6 +122,7 @@ public class EntityPlayer extends Entity
     {
 	ByteArrayOutputStream bo = new ByteArrayOutputStream();
 	DataOutputStream out = new DataOutputStream(bo);
+	out.write(id);
 	for(Object o : data)
 	{
 	    if(o == null)

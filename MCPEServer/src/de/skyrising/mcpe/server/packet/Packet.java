@@ -43,7 +43,7 @@ public abstract class Packet
     {
 	if(bout != null)
 	this.data = bout.toByteArray();
-	server.debug("Sending " + this);
+	if(!(this instanceof PacketAck))server.debug("Sending " + this);
 	server.sendToClient(new DatagramPacket(data, data.length, ip, port));
 	try
 	{
@@ -83,11 +83,11 @@ public abstract class Packet
 	{
 	    Constructor<? extends Packet> constructor = clazz.getConstructor(InetAddress.class, int.class, byte[].class);
 	    Packet p = constructor.newInstance(packet.getAddress(), packet.getPort(), data);
-	    server.debug("Recieving " + p);
+	    if(!(p instanceof PacketPayload || p instanceof PacketAck))server.debug("Recieved " + p);
 	    return p;
 	} catch(Exception e)
 	{
-	    server.error(e.toString());
+	    e.printStackTrace();
 	    return null;
 	}
     }

@@ -52,7 +52,7 @@ public class PacketPayload extends Packet
 	}
 	in.read(payload);
 	in.close();
-	server.debug("Payload: " + Constants.MC_NAMES[((int)payload[0])&0xFF]);
+	server.debug("Recieved " + this);
 	payloadIn = new DataInputStream(new ByteArrayInputStream(payload));
 	EntityPlayer player = server.clients.get(ip.hashCode() + port);
 	if(player == null)
@@ -62,6 +62,9 @@ public class PacketPayload extends Packet
 	    return;
 	}
 	player.count = count;
+	PacketAck ack = new PacketAck(ip, port);
+	ack.construct(count);
+	ack.send();
 	player.handleDataPacket(payload, payloadIn);
 	payloadIn.close();
     }
@@ -69,18 +72,23 @@ public class PacketPayload extends Packet
     @Override
     public void construct(Object... data)
     {
-        byte[] b = (byte[])data[1];
+        payload = (byte[])data[1];
         int count = (short)(int)data[0];
         try
 	{
 	    out.writeInt(count | 0x80000000);
 	    out.write(0x00);
-	    out.writeShort(b.length);
-	    out.write(b);
+	    out.writeShort(payload.length*8);
+	    out.write(payload);
 	} catch(IOException e)
 	{
 	    e.printStackTrace();
 	}
-        
+    }
+    
+    @Override
+    public String toString()
+    {
+        return super.toString() + (payload != null && payload.length > 0 ? String.format(" (0x%02X/%s)", payload[0], Constants.MC_NAMES[((int)payload[0])&0xFF]) : "");
     }
 }

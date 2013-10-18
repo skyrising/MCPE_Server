@@ -1,5 +1,6 @@
 package de.skyrising.mcpe.server.packet;
 
+import java.io.IOException;
 import java.net.InetAddress;
 
 public class PacketAck extends Packet
@@ -19,5 +20,19 @@ public class PacketAck extends Packet
     @Override
     public void handle() throws Exception
     {
+    }
+    
+    @Override
+    public void construct(Object... data)
+    {
+	try
+	{
+	    out.write(0xC0);
+	    out.writeShort(1);
+	    out.write(((int)data[0])&0xFFFFFF | 0x01000000);
+	} catch(IOException e)
+	{
+	    e.printStackTrace();
+	}
     }
 }
